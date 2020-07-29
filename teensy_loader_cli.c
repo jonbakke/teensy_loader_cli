@@ -620,10 +620,74 @@ void init_hid_manager(void)
 	IOHIDManagerRegisterDeviceRemovalCallback(hid_manager, detach_callback, NULL);
 	ret = IOHIDManagerOpen(hid_manager, kIOHIDOptionsTypeNone);
 	if (ret != kIOReturnSuccess) {
+				printf_verbose("Error opening HID Manager: ");
+
+		switch(ret) {
+		case kIOReturnSuccess:          printf_verbose("kIOReturnSuccess\n");          break;
+		case kIOReturnError:            printf_verbose("kIOReturnError\n");            break;
+		case kIOReturnNoMemory:         printf_verbose("kIOReturnNoMemory\n");         break;
+		case kIOReturnNoResources:      printf_verbose("kIOReturnNoResources\n");      break;
+		case kIOReturnIPCError:         printf_verbose("kIOReturnIPCError\n");         break;
+		case kIOReturnNoDevice:         printf_verbose("kIOReturnNoDevice\n");         break;
+		case kIOReturnNotPrivileged:    printf_verbose("kIOReturnNotPrivileged\n");    break;
+		case kIOReturnBadArgument:      printf_verbose("kIOReturnBadArgument\n");      break;
+		case kIOReturnLockedRead:       printf_verbose("kIOReturnLockedRead\n");       break;
+		case kIOReturnLockedWrite:      printf_verbose("kIOReturnLockedWrite\n");      break;
+		case kIOReturnExclusiveAccess:  printf_verbose("kIOReturnExclusiveAccess\n");  break;
+		case kIOReturnBadMessageID:     printf_verbose("kIOReturnBadMessageID\n");     break;
+		case kIOReturnUnsupported:      printf_verbose("kIOReturnUnsupported\n");      break;
+		case kIOReturnVMError:          printf_verbose("kIOReturnVMError\n");          break;
+		case kIOReturnInternalError:    printf_verbose("kIOReturnInternalError\n");    break;
+		case kIOReturnIOError:          printf_verbose("kIOReturnIOError\n");          break;
+		case kIOReturnCannotLock:       printf_verbose("kIOReturnCannotLock\n");       break;
+		case kIOReturnNotOpen:          printf_verbose("kIOReturnNotOpen\n");          break;
+		case kIOReturnNotReadable:      printf_verbose("kIOReturnNotReadable\n");      break;
+		case kIOReturnNotWritable:      printf_verbose("kIOReturnNotWritable\n");      break;
+		case kIOReturnNotAligned:       printf_verbose("kIOReturnNotAligned\n");       break;
+		case kIOReturnBadMedia:         printf_verbose("kIOReturnBadMedia\n");         break;
+		case kIOReturnStillOpen:        printf_verbose("kIOReturnStillOpen\n");        break;
+		case kIOReturnRLDError:         printf_verbose("kIOReturnRLDError\n");         break;
+		case kIOReturnDMAError:         printf_verbose("kIOReturnDMAError\n");         break;
+		case kIOReturnBusy:             printf_verbose("kIOReturnBusy\n");             break;
+		case kIOReturnTimeout:          printf_verbose("kIOReturnTimeout\n");          break;
+		case kIOReturnOffline:          printf_verbose("kIOReturnOffline\n");          break;
+		case kIOReturnNotReady:         printf_verbose("kIOReturnNotReady\n");         break;
+		case kIOReturnNotAttached:      printf_verbose("kIOReturnNotAttached\n");      break;
+		case kIOReturnNoChannels:       printf_verbose("kIOReturnNoChannels\n");       break;
+		case kIOReturnNoSpace:          printf_verbose("kIOReturnNoSpace\n");          break;
+		case kIOReturnPortExists:       printf_verbose("kIOReturnPortExists\n");       break;
+		case kIOReturnCannotWire:       printf_verbose("kIOReturnCannotWire\n");       break;
+		case kIOReturnNoInterrupt:      printf_verbose("kIOReturnNoInterrupt\n");      break;
+		case kIOReturnNoFrames:         printf_verbose("kIOReturnNoFrames\n");         break;
+		case kIOReturnMessageTooLarge:  printf_verbose("kIOReturnMessageTooLarge\n");  break;
+		case kIOReturnNotPermitted:     printf_verbose("kIOReturnNotPermitted\n");     break;
+		case kIOReturnNoPower:          printf_verbose("kIOReturnNoPower\n");          break;
+		case kIOReturnNoMedia:          printf_verbose("kIOReturnNoMedia\n");          break;
+		case kIOReturnUnformattedMedia: printf_verbose("kIOReturnUnformattedMedia\n"); break;
+		case kIOReturnUnsupportedMode:  printf_verbose("kIOReturnUnsupportedMode\n");  break;
+		case kIOReturnUnderrun:         printf_verbose("kIOReturnUnderrun\n");         break;
+		case kIOReturnOverrun:          printf_verbose("kIOReturnOverrun\n");          break;
+		case kIOReturnDeviceError:      printf_verbose("kIOReturnDeviceError\n");      break;
+		case kIOReturnNoCompletion:     printf_verbose("kIOReturnNoCompletion\n");     break;
+		case kIOReturnAborted:          printf_verbose("kIOReturnAborted\n");          break;
+		case kIOReturnNoBandwidth:      printf_verbose("kIOReturnNoBandwidth\n");      break;
+		case kIOReturnNotResponding:    printf_verbose("kIOReturnNotResponding\n");    break;
+		case kIOReturnIsoTooOld:        printf_verbose("kIOReturnIsoTooOld\n");        break;
+		case kIOReturnIsoTooNew:        printf_verbose("kIOReturnIsoTooNew\n");        break;
+		case kIOReturnNotFound:         printf_verbose("kIOReturnNotFound\n");         break;
+		case kIOReturnInvalid:          printf_verbose("kIOReturnInvalid\n");          break;
+		default:			printf_verbose("Unrecognized error.\n");       break;
+		}
+
+		if (ret == kIOReturnNotPermitted) {
+			printf_verbose("Unable to verify status of the USB HID system (for security reasons).\n");
+			printf_verbose("Nonetheless, may still be able to read and write to teensy devices. Continuing.\n");
+			return;
+		}
+
 		IOHIDManagerUnscheduleFromRunLoop(hid_manager,
 			CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 		CFRelease(hid_manager);
-		printf_verbose("Error opening HID Manager\n");
 	}
 }
 
